@@ -3,7 +3,7 @@
 LINT=
 GENERATE=
 
-while getopts :lL:gG: opt
+while getopts :gl opt
 do
     case "${opt}" in
         l)
@@ -20,9 +20,8 @@ do
 done
 shift $((OPTIND-1))
 
-IFS=$'\n'
 # create an array of all unique directories containing .tf files
-IFS=$'\n' directories=($(find . -name '*.tf' -exec dirname {} \; | sort -u))
+mapfile -t directories < <(find . -name '*.tf' -exec dirname {} \; | sort -u)
 
 for dir in "${directories[@]}"
 do
@@ -34,20 +33,20 @@ do
     # check for _docs folder
     if [[ -d "$docs_dir" ]]; then
 
-        if ! test -f $source_doc; then 
+        if ! test -f "$source_doc"; then 
             echo "ERROR: $source_doc is missing"; exit 1
         else
 
             # generate the tf documentation
             if [[ -n "$GENERATE" ]]; then
                 echo "Generating docs for: ${dir}"
-                cat $source_doc <(echo) <(scripts/terraform-docs.sh markdown "${dir}") > $target_doc
+                cat "$source_doc" <(echo) <(terraform-docs.sh markdown "${dir}") > "$target_doc"
             fi
 
             # lint the tf documentation
             if [[ -n "$LINT" ]]; then
                 echo "Linting docs for: ${dir}"
-                diff $target_doc <(cat $source_doc <(echo) <(scripts/terraform-docs.sh markdown ${dir}))
+                diff "$target_doc" <(cat "$source_doc" <(echo) <(terraform-docs.sh markdown "${dir}"))
             fi
 
         fi
