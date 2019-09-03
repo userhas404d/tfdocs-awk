@@ -21,8 +21,8 @@ done
 shift $((OPTIND-1))
 
 IFS=$'\n'
-# create an array of all unique directories containing .tf files 
-IFS=$'\n' directories=($(find . -name '*.tf' | xargs -I % sh -c 'dirname %' | sort -u))
+# create an array of all unique directories containing .tf files
+IFS=$'\n' directories=($(find . -name '*.tf' -exec dirname {} \; | sort -u))
 
 for dir in "${directories[@]}"
 do
