@@ -13,7 +13,7 @@ do
             GENERATE=1
             ;;
         \?)
-            echo "ERROR: unknown parameter \"$OPTARG\""
+            echo "ERROR: unknown parameter \"$OPTARG\"" 1>&2
             exit 1
             ;;
     esac
@@ -34,18 +34,18 @@ do
     if [[ -d "$docs_dir" ]]; then
 
         if ! test -f "$source_doc"; then 
-            echo "ERROR: $source_doc is missing"; exit 1
+            echo "ERROR: $source_doc is missing" 1>&2; exit 1
         else
 
             # generate the tf documentation
             if [[ -n "$GENERATE" ]]; then
-                echo "Generating docs for: ${dir}"
+                echo "Generating docs for: ${dir}" 1>&2
                 cat "$source_doc" <(echo) <(terraform-docs.sh markdown "${dir}") > "$target_doc"
             fi
 
             # lint the tf documentation
             if [[ -n "$LINT" ]]; then
-                echo "Linting docs for: ${dir}"
+                echo "Linting docs for: ${dir}" 1>&2
                 diff "$target_doc" <(cat "$source_doc" <(echo) <(terraform-docs.sh markdown "${dir}"))
             fi
 
