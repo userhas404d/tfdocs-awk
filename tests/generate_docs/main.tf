@@ -1,0 +1,3 @@
+locals {
+  baz = var.foo
+}
