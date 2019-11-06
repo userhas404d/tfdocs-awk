@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -u
+
 LINT=
 GENERATE=
 
@@ -36,6 +39,9 @@ do
         if ! test -f "$source_doc"; then 
             echo "ERROR: $source_doc is missing" 1>&2; exit 1
         else
+
+        # validate that the source terraform is valid before proceeding
+        terraform-docs.sh markdown "${dir}" > /dev/null 2>&1 || exit 1
 
             # generate the tf documentation
             if [[ -n "$GENERATE" ]]; then
