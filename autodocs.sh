@@ -41,7 +41,7 @@ do
         else
 
         # validate that the source terraform is valid before proceeding
-        terraform-docs.sh markdown "${dir}" 1>&2 || exit 1
+        terraform-docs.sh markdown "${dir}" > /dev/null 2>&1 || exit 1
 
             # generate the tf documentation
             if [[ -n "$GENERATE" ]]; then
