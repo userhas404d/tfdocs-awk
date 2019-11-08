@@ -17,7 +17,13 @@ if [[ "$(terraform version | head -1)" =~ 0\.12 ]]; then
     pushd "$MODULE" >/dev/null 2>&1 || ( echo "Unable to navigate to $MODULE"; exit 1)
     TMP_FILE="$(mktemp /tmp/terraform-docs-XXXXXXXXXX)"
     # shellcheck disable=SC2035
-    awk -f "$DIR/terraform-docs.awk" *.tf > "${TMP_FILE}"
+    AWK_RESULT="$(awk -f "$DIR/terraform-docs.awk" *.tf)"
+    if [ -z "$AWK_RESULT" ]
+    then
+        echo "$AWK_RESULT" > "${TMP_FILE}"
+    else
+        echo "awk results were empty"; exit 1
+    fi
     terraform-docs "$1" "${TMP_FILE}"
     rm -f "${TMP_FILE}"
     popd >/dev/null 2>&1 || ( echo "Unable to return to source directory"; exit 1)
